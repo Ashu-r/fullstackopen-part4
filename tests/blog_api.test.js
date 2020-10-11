@@ -24,19 +24,43 @@ const initialBlogs = [
 
 beforeEach(async () => {
 	await Blog.deleteMany({});
-	let blogObject = new Blog(initialBlogs[0]);
-	await blogObject.save();
-	blogObject = new Blog(initialBlogs[1]);
-	await blogObject.save();
+
+	const blogObjects = initialBlogs.map((blog) => new Blog(blog));
+	const promiseArray = blogObjects.map((blog) => blog.save());
+	await Promise.all(promiseArray);
 });
 
-test('blog returned as json', async () => {
-	await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/);
+describe('json and total blogs', () => {
+	test('blog returned as json', async () => {
+		await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/);
+	});
+
+	test('lenght of blogs (total blogs)', async () => {
+		const response = await api.get('/api/blogs');
+		expect(response.body).toHaveLength(initialBlogs.length);
+	});
 });
 
-test('lenght of blogs (total blogs)', async () => {
-	const response = await api.get('/api/blogs');
-	expect(response.body).toHaveLength(initialBlogs.length);
+describe('step 2 identifying property is id not _id', () => {
+	test('identify id', async () => {
+		const response = await api.get('/api/blogs');
+		expect(response.body[0].id).toBeDefined();
+	});
+});
+
+describe('step 3 verifying POST request creates new blog', () => {
+	test('post', async () => {
+		const newBlog = {
+			title: 'How does async await work?',
+			author: 'Ash',
+			url: 'www.jsstuff.com/article/async_await',
+			likes: 104,
+		};
+
+		await api.post('/api/blogs').send(newBlog);
+		const response = await api.get('/api/blogs');
+		expect(response.body).toHaveLength(initialBlogs.length + 1);
+	});
 });
 
 afterAll(() => {
