@@ -7,20 +7,7 @@ const api = supertest(app);
 
 const Blog = require('../models/blog');
 
-const initialBlogs = [
-	{
-		title: 'How does arrow function work?',
-		author: 'Juan',
-		url: 'www.jsstuff.com/article/arrow_functions',
-		likes: 148,
-	},
-	{
-		title: 'How does normal function work?',
-		author: 'Juan',
-		url: 'www.jsstuff.com/article/normal_functions',
-		likes: 120,
-	},
-];
+const { initialBlogs, newBlog, newBlogNoLikes } = require('../utils/list_helper');
 
 beforeEach(async () => {
 	await Blog.deleteMany({});
@@ -50,16 +37,16 @@ describe('step 2 identifying property is id not _id', () => {
 
 describe('step 3 verifying POST request creates new blog', () => {
 	test('post', async () => {
-		const newBlog = {
-			title: 'How does async await work?',
-			author: 'Ash',
-			url: 'www.jsstuff.com/article/async_await',
-			likes: 104,
-		};
-
 		await api.post('/api/blogs').send(newBlog);
-		const response = await api.get('/api/blogs');
-		expect(response.body).toHaveLength(initialBlogs.length + 1);
+		const getAllBlogs = await Blog.find({});
+		expect(getAllBlogs).toHaveLength(initialBlogs.length + 1);
+	});
+});
+
+describe('step 4 if like is missing, set likes to zero', () => {
+	test('likes', async () => {
+		const response = await api.post('/api/blogs').send(newBlogNoLikes);
+		expect(response.body.likes).toBe(0);
 	});
 });
 
