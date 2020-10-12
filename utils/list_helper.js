@@ -15,6 +15,7 @@ const favoriteBlog = (blogs) => {
 	return {
 		title: mostLikedBlog.title,
 		author: mostLikedBlog.author,
+		url: mostLikedBlog.url,
 		likes: mostLikedBlog.likes,
 	};
 };
