@@ -1,5 +1,3 @@
-const _ = require("lodash");
-
 const listHelper = require("../utils/list_helper");
 
 test("dummy returns one", () => {
@@ -81,7 +79,7 @@ describe("favorite blog", () => {
 
 describe("Author with most posts", () => {
 	test("best author", () => {
-		const bestAuthor = listHelper.mostBlogs;
+		const bestAuthor = listHelper.mostBlogs(blogs);
 		expect(bestAuthor).toBe("Robert C. Martin");
 	});
 });
