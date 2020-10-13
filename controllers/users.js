@@ -2,6 +2,11 @@ const bcrypt = require('bcrypt');
 const usersRouter = require('express').Router();
 const User = require('../models/user');
 
+usersRouter.get('/', async (request, response) => {
+	const users = await User.find({}).populate('blogs', { user: 0 });
+	response.json(users);
+});
+
 usersRouter.post('/', async (request, response) => {
 	const { body } = request;
 	const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
