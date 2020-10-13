@@ -20,6 +20,15 @@ const favoriteBlog = (blogs) => {
 	};
 };
 
+const mostBlogs = (blogs) => {
+	const authors = blogs.map((blog) => blog.author);
+	const authorBlogs = _.countBy(authors);
+	return (bestAuthor = _.maxBy(
+		_.keys(authorBlogs),
+		(o) => authorBlogs[o]
+	));
+};
+
 const initialBlogs = [
 	{
 		title: "How does arrow function work?",
@@ -55,4 +64,5 @@ module.exports = {
 	initialBlogs,
 	newBlog,
 	newBlogNoLikes,
+	mostBlogs,
 };
