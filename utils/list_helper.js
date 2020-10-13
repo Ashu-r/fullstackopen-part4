@@ -1,3 +1,4 @@
+const { values } = require("lodash");
 const _ = require("lodash");
 
 const dummy = () => {
@@ -25,10 +26,30 @@ const favoriteBlog = (blogs) => {
 const mostBlogs = (blogs) => {
 	const authors = blogs.map((blog) => blog.author);
 	const authorBlogs = _.countBy(authors);
-	return (bestAuthor = _.maxBy(
-		_.keys(authorBlogs),
-		(o) => authorBlogs[o]
-	));
+	return _.maxBy(_.keys(authorBlogs), (o) => authorBlogs[o]);
+};
+
+const mostLikes = (blogs) => {
+	const authorsWithTotalLikes = _.reduce(
+		blogs,
+		(result, val) => {
+			if (!(val.author in result)) {
+				result[val.author] = val.likes;
+			} else {
+				result[val.author] += val.likes;
+			}
+			return result;
+		},
+		{}
+	);
+	const topRatedAuthor = _.maxBy(
+		_.keys(authorsWithTotalLikes),
+		(o) => authorsWithTotalLikes[o]
+	);
+	return {
+		author: topRatedAuthor,
+		blogs: authorsWithTotalLikes[topRatedAuthor],
+	};
 };
 
 const initialBlogs = [
@@ -67,4 +88,5 @@ module.exports = {
 	newBlog,
 	newBlogNoLikes,
 	mostBlogs,
+	mostLikes,
 };
